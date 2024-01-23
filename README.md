@@ -1,11 +1,11 @@
 # cryptocurrency_price_tracker
 Node.js RESTful API using CoinGecko public API, Express.js, and MongoDB. Get real-time and historical crypto prices for seamless integration.
 
-Develop a REST API for Cryptocurrency Price Tracking with User Authentication
+## Develop a REST API for Cryptocurrency Price Tracking with User Authentication
 
 01) Objective :
 
-## Build a RESTful API using JavaScript that retrieves cryptocurrency prices from an external API, updates at regular intervals and includes user authentication.
+Build a RESTful API using JavaScript that retrieves cryptocurrency prices from an external API, updates at regular intervals and includes user authentication.
 
 02) Key Requirements:
 
