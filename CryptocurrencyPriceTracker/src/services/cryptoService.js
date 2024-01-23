@@ -1,6 +1,7 @@
 const axios = require('axios');
 const {wss} = require('../utils/webSocketUtils');
 const WebSocket = require('ws');
+const Crypto = require('../models/Crypto');
 
 const coinGeckoApiUrl = 'https://api.coingecko.com/api/v3';
 
@@ -55,4 +56,53 @@ async function getCryptoPricesRealTime(param) {
     }
 }
 
-module.exports = {getCryptoPrices, getCryptoPricesRealTime};
+// Get User's Favorite Cryptocurrencies
+async function getUserFavorites(userId) {
+    try {
+        return await Crypto.find({userId});
+    } catch (error) {
+        console.error(error);
+        throw new Error('Error fetching user\'s favorite cryptocurrencies');
+    }
+}
+
+// Add Favorite Cryptocurrency for the User
+async function addFavoriteCrypto(userId, name, symbol) {
+    try {
+        const existingCrypto = await Crypto.findOne({userId, name});
+        if (existingCrypto) {
+            throw new Error('Cryptocurrency already added as a favorite.');
+        }
+
+        const newCrypto = new Crypto({userId, name, symbol});
+        await newCrypto.save();
+
+        return 'Cryptocurrency added to favorites successfully.';
+    } catch (error) {
+        console.error(error);
+        throw new Error('Error adding cryptocurrency to favorites');
+    }
+}
+
+// Remove Favorite Cryptocurrency for the User
+async function removeFavoriteCrypto(userId, cryptoId) {
+    try {
+        const existingCrypto = await Crypto.findOne({userId, _id: cryptoId});
+        if (!existingCrypto) {
+            throw new Error('Cryptocurrency not found in favorites.');
+        }
+
+        await Crypto.findByIdAndDelete(cryptoId);
+
+        return 'Cryptocurrency removed from favorites successfully.';
+    } catch (error) {
+        console.error(error);
+        throw new Error('Error removing cryptocurrency from favorites');
+    }
+}
+
+module.exports = {
+    getCryptoPrices, getCryptoPricesRealTime, getUserFavorites,
+    addFavoriteCrypto,
+    removeFavoriteCrypto,
+};

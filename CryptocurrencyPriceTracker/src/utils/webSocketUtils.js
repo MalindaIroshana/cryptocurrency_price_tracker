@@ -2,6 +2,9 @@ const WebSocket = require('ws');
 
 const wss = new WebSocket.Server({ noServer: true });
 
+// Increase the limit to, say, 15
+wss.setMaxListeners(15);
+
 // Handle incoming WebSocket connections
 wss.on('connection', (ws) => {
     console.log('WebSocket connection established');
