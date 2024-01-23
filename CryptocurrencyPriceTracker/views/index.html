@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Crypto Prices</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f8f8;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 400px;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        #output {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            background-color: #fff;
+            overflow: auto;
+            max-height: 200px;
+        }
+
+        #connectButton, #disconnectButton {
+            margin-top: 20px;
+            padding: 10px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body onload="connectWebSocket()">
+<div class="container">
+    <h1>Crypto Prices Traker</h1>
+    <div>
+        <button id="connectButton" onclick="connectWebSocket()">Connect WebSocket</button>
+        <button id="disconnectButton" onclick="disconnectWebSocket()" disabled>Disconnect WebSocket</button>
+    </div>
+
+    <div id="output"></div>
+</div>
+
+<script>
+    let ws;
+
+    function connectWebSocket() {
+        ws = new WebSocket('ws://localhost:3000');
+
+        ws.onopen = () => {
+            console.log('WebSocket connection opened');
+            document.getElementById('connectButton').disabled = true;
+            document.getElementById('disconnectButton').disabled = false;
+        };
+
+        ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            if (data.type === 'cryptoUpdate') {
+                const outputDiv = document.getElementById('output');
+                outputDiv.innerHTML = `<pre>${JSON.stringify(data.data, null, 2)}</pre>`;
+            }
+        };
+
+        ws.onclose = () => {
+            console.log('WebSocket connection closed');
+            document.getElementById('connectButton').disabled = false;
+            document.getElementById('disconnectButton').disabled = true;
+        };
+    }
+
+    function disconnectWebSocket() {
+        if (ws) {
+            ws.close();
+        }
+    }
+</script>
+</body>
+
+</html>
