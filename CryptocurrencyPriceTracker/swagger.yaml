@@ -1,0 +1,214 @@
+openapi: 3.0.0
+info:
+  title: Cryptocurrency API
+  version: 1.0.0
+paths:
+  /auth/register:
+    post:
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+        '400':
+          description: User registration failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+  /auth/login:
+    post:
+      summary: Log in as an existing user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: User logged in successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+  /auth/protected:
+    get:
+      summary: Get protected information
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Successfully retrieved protected information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  user:
+                    $ref: '#/components/schemas/User'
+        '401':
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+  /crypto/favorites:
+    get:
+      summary: Get user's favorite cryptocurrencies
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Successfully retrieved user's favorite cryptocurrencies
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  favoriteCryptos:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Crypto'
+        '401':
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+  /crypto/add:
+    post:
+      summary: Add a favorite cryptocurrency
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                symbol:
+                  type: string
+      responses:
+        '200':
+          description: Cryptocurrency added to favorites successfully
+        '400':
+          description: Cryptocurrency already added as a favorite
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '401':
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+  /crypto/remove/{cryptoId}:
+    delete:
+      summary: Remove a favorite cryptocurrency
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: cryptoId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Cryptocurrency removed from favorites successfully
+        '404':
+          description: Cryptocurrency not found in favorites
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '401':
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    Crypto:
+      type: object
+      properties:
+        userId:
+          type: string
+        name:
+          type: string
+        symbol:
+          type: string
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
