@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const User = require('../models/User');
 const { generateToken } = require('../utils/jwtUtils');
+const jwt = require('jsonwebtoken');
 
 async function registerUser(username, password) {
     try {
@@ -52,4 +53,22 @@ async function loginUser(username, password) {
     }
 }
 
-module.exports = { registerUser, loginUser };
+async function generateTestToken() {
+    const payload = {
+        userId: '65b1ca183ada9592c10769dc',
+        username: 'iroshana',
+    };
+
+    const secretKey = 'spera_secret';
+
+    // Token expiration time (in seconds)
+    const expiresIn = 3600; // 1 hour
+
+    // Sign the token
+    const token = jwt.sign(payload, secretKey, { expiresIn });
+
+    return token;
+}
+
+
+module.exports = { registerUser, loginUser, generateTestToken };

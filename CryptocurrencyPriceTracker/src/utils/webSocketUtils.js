@@ -14,8 +14,6 @@ wss.on('connection', (ws) => {
         console.log(`Received WebSocket message: ${message}`);
     });
 
-    // You can send real-time updates to the connected clients here
-    // For example, if you receive updates from the CoinGecko API, you can broadcast them to all connected clients.
     // Simulate sending updates every 5 seconds
     const updateInterval = setInterval(() => {
         const randomData = {

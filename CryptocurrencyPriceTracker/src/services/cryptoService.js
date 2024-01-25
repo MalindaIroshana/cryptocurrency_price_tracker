@@ -48,7 +48,7 @@ async function getCryptoPricesRealTime(param) {
                 clearInterval(updateInterval);
             });
             return cryptoPrices;
-        }, 20000);
+        }, 30000);
         // Broadcast the real-time updates to all connected WebSocket clients
     } catch (error) {
         console.error('Error fetching cryptocurrency prices:', error.message);
